@@ -315,3 +315,29 @@ button, input, select, textarea, label {
   }
 }
 
+
+/* ───────── AI CV Studio ───────── */
+@keyframes cv-studio-float {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(24px, -18px, 0) scale(1.08); }
+}
+.cv-studio-blob { animation: cv-studio-float 12s ease-in-out infinite; }
+.cv-studio-blob-delay { animation-delay: -6s; }
+
+@keyframes cv-studio-shine {
+  0% { transform: translateX(-120%) skewX(-20deg); }
+  60%, 100% { transform: translateX(220%) skewX(-20deg); }
+}
+.cv-studio-cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  animation: cv-studio-shine 3.2s ease-in-out infinite;
+}
+.cv-studio-cta:disabled::after { animation: none; display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cv-studio-blob, .cv-studio-cta::after { animation: none; }
+}

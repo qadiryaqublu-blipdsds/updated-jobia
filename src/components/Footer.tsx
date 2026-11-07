@@ -68,12 +68,12 @@ export const Footer: React.FC<FooterProps> = ({
 
           {/* Primary Slogan */}
           <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-snug">
-            {dict.brand.heroHeadline || 'Gələcəyin İş İmkanları və Süni İntellekt Dəstəkli İşə Qəbul'}
+            {(dict as any).brand?.heroHeadline || 'Gələcəyin İş İmkanları və Süni İntellekt Dəstəkli İşə Qəbul'}
           </h2>
 
           {/* Subtitle with localized explanation */}
           <p className="mt-2 text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            {dict.brand.heroSubtitle || 'Jobia.az ilə minlərlə rəsmi vakansiyanı xəritədə tapın, AI ilə CV-nizi təhlil edin və iş təkliflərini birbaşa qəbul edin.'}
+            {(dict as any).brand?.heroSubtitle || 'Jobia.az ilə minlərlə rəsmi vakansiyanı xəritədə tapın, AI ilə CV-nizi təhlil edin və iş təkliflərini birbaşa qəbul edin.'}
           </p>
 
           {/* Feature Trust Pills */}
@@ -355,7 +355,7 @@ export const Footer: React.FC<FooterProps> = ({
           </div>
 
           <div className="flex items-center gap-1.5 text-slate-600 text-xs font-semibold">
-            <span>{dict.brand.slogan || 'Azərbaycanın Ən Ağıllı Vakansiya və Karyera Platforması'}</span>
+            <span>{(dict as any).brand?.slogan || 'Azərbaycanın Ən Ağıllı Vakansiya və Karyera Platforması'}</span>
             <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500 inline ml-0.5" />
           </div>
         </div>

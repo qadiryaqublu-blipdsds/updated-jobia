@@ -14,6 +14,7 @@ import {
 } from '../../types';
 import { CV_TEMPLATES, CVTemplateMeta } from '../cv-templates/templateRegistry';
 import { CVRenderer } from '../cv-templates/CVRenderer';
+import { CVMagicStudio } from './CVMagicStudio';
 import { downloadCVAsPDF } from '../../utils/pdfExport';
 import {
   Download,
@@ -929,12 +930,12 @@ export const CVCreator: React.FC<CVCreatorProps> = ({
                   : 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200'
               }`}
             >
-              <Clipboard className="w-3.5 h-3.5 shrink-0" />
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
               <span className="hidden md:inline">
-                {language === 'en' ? 'Paste Text (AI)' : language === 'ru' ? 'Вставить текст (ИИ)' : 'Mətni Yapışdır (AI)'}
+                {language === 'en' ? 'AI CV Studio' : language === 'ru' ? 'AI CV Студия' : 'AI CV Studio'}
               </span>
               <span className="md:hidden">
-                {language === 'en' ? 'Paste AI' : language === 'ru' ? 'ИИ Текст' : 'Mətn AI'}
+                {language === 'en' ? 'AI Studio' : language === 'ru' ? 'AI Студия' : 'AI Studio'}
               </span>
             </button>
 
@@ -975,9 +976,9 @@ export const CVCreator: React.FC<CVCreatorProps> = ({
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
               }`}
             >
-              <Clipboard className="w-3.5 h-3.5 text-purple-600" />
+              <Sparkles className="w-3.5 h-3.5 text-purple-600" />
               <span>
-                {language === 'en' ? 'Paste text (Auto CV)' : language === 'ru' ? 'Вставить текст (Авто-резюме)' : 'Mətni yapışdır (Avtomatik CV)'}
+                {language === 'en' ? 'AI Studio (voice · text · upload)' : language === 'ru' ? 'AI Студия (голос · текст · файл)' : 'AI Studio (səs · yazı · fayl)'}
               </span>
             </button>
 
@@ -1114,126 +1115,20 @@ export const CVCreator: React.FC<CVCreatorProps> = ({
         {activeTab === 'paste' && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              {/* Left Form: Paste Area (7 cols) */}
-              <div className="lg:col-span-7 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
-                  <div>
-                    <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
-                      <Clipboard className="w-5 h-5 text-purple-600" />
-                      {language === 'en' ? 'Paste Text — Auto-generate CV' : language === 'ru' ? 'Вставьте текст — Автогенерация резюме' : 'Mətni Yapışdırın — Avtomatik CV Hazırlansın'}
-                    </h2>
-                    <p className="text-xs text-slate-500 mt-1">
-                      {language === 'en' 
-                        ? 'Paste your LinkedIn profile, old CV text, or notes here. AI will craft a complete CV in seconds.'
-                        : language === 'ru'
-                        ? 'Вставьте ваш профиль LinkedIn, текст старого резюме или заметки сюда. ИИ составит полное резюме за секунды.'
-                        : 'LinkedIn profilinizi, köhnə CV mətninizi və ya qeydlərinizi bura yapışdırın. AI saniyələr içində tam CV hazırlayacaq.'}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Quick actions bar */}
-                <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-                  <span className="font-semibold text-slate-700">
-                    {language === 'en' ? 'Text Area:' : language === 'ru' ? 'Текстовое поле:' : 'Mətn sahəsi:'}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPastedText(SAMPLE_PASTE_TEXT);
-                        setPasteErrorMsg('');
-                      }}
-                      className="px-2.5 py-1 rounded-md bg-purple-50 hover:bg-purple-100 text-purple-700 font-medium transition-colors border border-purple-200 flex items-center gap-1 cursor-pointer"
-                    >
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>{language === 'en' ? 'Insert Sample' : language === 'ru' ? 'Вставить пример' : 'Nümunə mətn qoy'}</span>
-                    </button>
-                    {pastedText && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPastedText('');
-                          setPasteStatusMsg('');
-                          setPasteErrorMsg('');
-                        }}
-                        className="px-2 py-1 rounded-md text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-                      >
-                        {language === 'en' ? 'Clear' : language === 'ru' ? 'Очистить' : 'Təmizlə'}
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Textarea */}
-                <div className="relative">
-                  <textarea
-                    rows={12}
-                    value={pastedText}
-                    onChange={(e) => {
-                      setPastedText(e.target.value);
-                      if (pasteErrorMsg) setPasteErrorMsg('');
-                    }}
-                    placeholder={
-                      language === 'en'
-                        ? `Paste your old CV text, LinkedIn profile, or notes here (Ctrl+V)...\n\nExample:\nFull Name: Rashad Guliyev\nJob Title: Senior Backend Developer\nContact: +994 50 345 67 89, rashad@example.com\nExperience: Tech Corp — Senior Backend Developer (2021 – Present)...\nEducation: University of Technology — BS Computer Science...\nSkills: Java, Spring Boot, PostgreSQL, Docker, Kubernetes, Kafka...`
-                        : language === 'ru'
-                        ? `Вставьте текст старого резюме, профиль LinkedIn или заметки сюда (Ctrl+V)...\n\nПример:\nФИО: Рашад Гулиев\nДолжность: Senior Backend Developer\nКонтакты: +994 50 345 67 89, rashad@example.com\nОпыт работы: Tech Corp — Senior Backend Developer (2021 – по н.в.)...\nОбразование: Технический Университет — Бакалавр компьютерных наук...\nНавыки: Java, Spring Boot, PostgreSQL, Docker, Kubernetes, Kafka...`
-                        : `Köhnə CV mətninizi, LinkedIn profilinizi və ya qeydlərinizi bura yapışdırın (Ctrl+V)...\n\nMəsələn:\nAd və Soyad: Rəşad Quliyev\nVəzifə: Senior Java & Backend Developer\nƏlaqə: +994 50 345 67 89, reshad@example.com\nTəcrübə: Kapital Bank ASC — Senior Java Developer (2021 – İndiyədək)...\nTəhsil: Bakı Ali Neft Məktəbi — Kompüter Mühəndisliyi...\nBacarıqlar: Java, Spring Boot, PostgreSQL, Docker, Kafka...`
-                    }
-                    className="w-full p-3.5 rounded-xl border border-slate-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 text-xs sm:text-sm font-mono leading-relaxed bg-slate-50/50 text-slate-800 resize-y"
-                  />
-                  <div className="text-[11px] text-slate-400 mt-1 flex justify-between">
-                    <span>{pastedText.length} {language === 'en' ? 'characters entered' : language === 'ru' ? 'символов введено' : 'simvol daxil edilib'}</span>
-                    <span>{language === 'en' ? 'CV auto-generated from any text' : language === 'ru' ? 'Резюме генерируется из любого текста' : 'İstənilən sərbəst mətndən CV tərtib edilir'}</span>
-                  </div>
-                </div>
-
-                {/* Status or Error Notifications */}
-                {pasteErrorMsg && (
-                  <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-start gap-2">
-                    <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                    <span>{pasteErrorMsg}</span>
-                  </div>
-                )}
-
-                {pasteStatusMsg && (
-                  <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
-                    <span className="font-semibold">{pasteStatusMsg}</span>
-                  </div>
-                )}
-
-                {/* Big Action Submit Button */}
-                <button
-                  type="button"
-                  onClick={() => handleGenerateFromPastedText()}
-                  disabled={isPastingAiLoading || !pastedText.trim()}
-                  className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-emerald-600 hover:from-purple-700 hover:to-emerald-700 text-white font-extrabold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.99] cursor-pointer"
-                >
-                  {isPastingAiLoading ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>{language === 'en' ? 'AI is crafting your CV... Please wait' : language === 'ru' ? 'ИИ составляет резюме... Пожалуйста, подождите' : 'Süni intellekt CV-ni tərtib edir... Zəhmət olmasa gözləyin'}</span>
-                    </>
-                  ) : (
-                    <>
-                      <Wand2 className="w-5 h-5" />
-                      <span>{language === 'en' ? 'Generate CV Automatically (AI)' : language === 'ru' ? 'Автоматически создать резюме (ИИ)' : 'Avtomatik CV Hazırla (AI)'}</span>
-                    </>
-                  )}
-                </button>
-
-                <div className="pt-2 flex items-center justify-between text-xs text-slate-500 border-t border-slate-100">
-                  <span>{language === 'en' ? 'Generated CV appears instantly on the right.' : language === 'ru' ? 'Созданное резюме сразу отобразится справа.' : 'Hazırlanan CV dərhal sağ tərəfdə canlı görünəcək.'}</span>
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('editor')}
-                    className="text-purple-600 hover:text-purple-800 font-semibold cursor-pointer"
-                  >
-                    {language === 'en' ? 'Switch to manual editing →' : language === 'ru' ? 'Перейти к ручному редактированию →' : 'Əl ilə redaktəyə keç →'}
-                  </button>
-                </div>
+              {/* Left: AI CV Studio — voice / text / upload (7 cols) */}
+              <div className="lg:col-span-7">
+                <CVMagicStudio
+                  language={language}
+                  isGenerating={isPastingAiLoading}
+                  statusMsg={pasteStatusMsg}
+                  errorMsg={pasteErrorMsg}
+                  sampleText={SAMPLE_PASTE_TEXT}
+                  onGenerate={(text) => {
+                    setPastedText(text);
+                    handleGenerateFromPastedText(text);
+                  }}
+                  onManualEdit={() => setActiveTab('editor')}
+                />
               </div>
 
               {/* Right Column: Live A4 Preview & Template Selector (5 cols) */}

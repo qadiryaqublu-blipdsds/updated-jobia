@@ -3375,6 +3375,119 @@ function parseRawTextToCVFallback(rawText: string, targetRole?: string) {
 }
 
 // 3.2 AI Generate & Structure Full CV from Raw Pasted Text (for CV Builder)
+// ─────────────────────────────────────────────────────────────
+// CV Studio: Upload → plain text (PDF / DOCX / DOC / TXT / image)
+// ─────────────────────────────────────────────────────────────
+app.post('/api/ai/extract-cv-text', async (req, res) => {
+  const { fileBase64, mimeType, fileName } = req.body || {};
+  if (!fileBase64 || typeof fileBase64 !== 'string' || fileBase64.length < 50) {
+    return res.status(400).json({ success: false, error: 'Fayl göndərilmədi və ya boşdur.' });
+  }
+
+  const cleanBase64 = fileBase64.includes(',') ? fileBase64.split(',')[1] : fileBase64;
+  const isImage = typeof mimeType === 'string' && mimeType.startsWith('image/');
+
+  try {
+    // Images (scanned CV, phone photo) need AI vision; documents are parsed locally first.
+    if (!isImage) {
+      const text = await extractTextFromUpload(cleanBase64, mimeType, fileName);
+      if (text && text.trim().length > 20) {
+        return res.json({ success: true, text: text.trim().slice(0, 20000), source: 'parser' });
+      }
+    }
+
+    if (!getAI()) {
+      return res.status(422).json({
+        success: false,
+        error: isImage
+          ? 'Şəkildən mətn oxumaq üçün AI xidməti hazırda əlçatan deyil. Zəhmət olmasa PDF və ya Word faylı yükləyin.'
+          : 'Fayldan mətn oxunmadı. Skan edilmiş PDF-dirsə, mətni "Yazı ilə" bölməsinə yapışdırın.',
+      });
+    }
+
+    const ocrText = await callGeminiResilient(
+      [
+        {
+          role: 'user',
+          parts: [
+            { inlineData: { mimeType: mimeType || 'application/pdf', data: cleanBase64 } },
+            {
+              text:
+                'Bu sənəd CV / rezyume və ya karyera qeydidir. İçindəki bütün mətni olduğu kimi, orijinal dildə, sətir-sətir çıxar. ' +
+                'Heç nə uydurma, şərh əlavə etmə, yalnız sənəddəki mətni qaytar.',
+            },
+          ],
+        },
+      ],
+      undefined,
+      undefined,
+      45000
+    );
+
+    if (ocrText && ocrText.trim().length > 20) {
+      return res.json({ success: true, text: ocrText.trim().slice(0, 20000), source: 'ai_ocr' });
+    }
+    return res.status(422).json({ success: false, error: 'Fayldan oxuna bilən mətn tapılmadı.' });
+  } catch (err: any) {
+    console.log('[CV Studio] extract-cv-text note:', err?.message || err);
+    return res.status(422).json({
+      success: false,
+      error: 'Fayl oxunarkən problem yarandı. Başqa format (PDF / DOCX) yoxlayın və ya mətni yapışdırın.',
+    });
+  }
+});
+
+// ─────────────────────────────────────────────────────────────
+// CV Studio: Voice recording → transcript (fallback for browsers
+// without the Web Speech API, e.g. Firefox / some iOS versions)
+// ─────────────────────────────────────────────────────────────
+app.post('/api/ai/transcribe-audio', async (req, res) => {
+  const { audioBase64, mimeType, language } = req.body || {};
+  if (!audioBase64 || typeof audioBase64 !== 'string' || audioBase64.length < 100) {
+    return res.status(400).json({ success: false, error: 'Səs yazısı tapılmadı.' });
+  }
+  if (!getAI()) {
+    return res.status(503).json({
+      success: false,
+      error: 'Səsin mətnə çevrilməsi üçün AI xidməti hazırda əlçatan deyil. Chrome və ya Edge brauzerindən istifadə edin, ya da yazı ilə davam edin.',
+    });
+  }
+
+  const cleanBase64 = audioBase64.includes(',') ? audioBase64.split(',')[1] : audioBase64;
+  const langName = language === 'en' ? 'English' : language === 'ru' ? 'Russian' : 'Azerbaijani';
+  // Strip codec params such as "audio/webm;codecs=opus" — Gemini expects a bare MIME type.
+  const cleanMime = (typeof mimeType === 'string' && mimeType.split(';')[0]) || 'audio/webm';
+
+  try {
+    const transcript = await callGeminiResilient(
+      [
+        {
+          role: 'user',
+          parts: [
+            { inlineData: { mimeType: cleanMime, data: cleanBase64 } },
+            {
+              text:
+                `Transcribe this audio verbatim. The speaker is mostly speaking ${langName} (may mix Azerbaijani, Russian, English and Turkish words). ` +
+                'The speaker is describing their career for a CV: name, job titles, companies, dates, education, skills, languages, contacts. ' +
+                'Write company names, emails and phone numbers correctly. Return ONLY the transcript text, no comments.',
+            },
+          ],
+        },
+      ],
+      undefined,
+      undefined,
+      45000
+    );
+    return res.json({ success: true, text: (transcript || '').trim() });
+  } catch (err: any) {
+    console.log('[CV Studio] transcribe-audio note:', err?.message || err);
+    return res.status(503).json({
+      success: false,
+      error: 'Səs mətnə çevrilə bilmədi. Bir az sonra yenidən cəhd edin və ya yazı ilə davam edin.',
+    });
+  }
+});
+
 app.post('/api/ai/generate-cv-from-text', async (req, res) => {
   const { rawText, targetJobTitle } = req.body;
 
