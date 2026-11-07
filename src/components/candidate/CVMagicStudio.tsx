@@ -15,7 +15,8 @@ import {
   ChevronRight,
   ScanText,
   LayoutTemplate,
-  BadgeCheck,
+  ShieldCheck,
+  ArrowUpRight,
 } from 'lucide-react';
 
 /**
@@ -539,35 +540,32 @@ export const CVMagicStudio: React.FC<CVMagicStudioProps> = ({
   const shownError = localError || errorMsg;
   const busy = isGenerating || isTranscribing || isReadingFile;
 
-  const modeTiles: { id: Mode; icon: React.ReactNode; grad: string }[] = [
-    { id: 'voice', icon: <Mic className="w-5 h-5" />, grad: 'from-fuchsia-500 to-rose-500' },
-    { id: 'text', icon: <Keyboard className="w-5 h-5" />, grad: 'from-indigo-500 to-sky-500' },
-    { id: 'upload', icon: <UploadCloud className="w-5 h-5" />, grad: 'from-emerald-500 to-teal-500' },
+  // jobia.az brand: green #00a859 (hover #00914c, active #007a40, light #ecfdf5, border #a7f3d0),
+  // white surfaces, soft green canvas, deep-green feature panel (same as homepage hero card).
+  const modeTiles: { id: Mode; icon: React.ReactNode }[] = [
+    { id: 'voice', icon: <Mic className="w-5 h-5" /> },
+    { id: 'text', icon: <Keyboard className="w-5 h-5" /> },
+    { id: 'upload', icon: <UploadCloud className="w-5 h-5" /> },
   ];
 
   return (
-    <section className="relative overflow-hidden rounded-3xl bg-slate-950 text-white shadow-2xl ring-1 ring-white/10">
-      {/* Ambient background */}
+    <section className="cv-studio relative overflow-hidden rounded-[28px] border border-[#dce9df] bg-white text-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_40px_-12px_rgba(0,122,64,0.12)]">
+      {/* soft brand canvas */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="cv-studio-blob absolute -top-24 -left-20 h-72 w-72 rounded-full bg-fuchsia-600/30 blur-3xl" />
-        <div className="cv-studio-blob cv-studio-blob-delay absolute -bottom-28 -right-16 h-80 w-80 rounded-full bg-emerald-500/25 blur-3xl" />
-        <div className="absolute top-1/3 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-indigo-600/20 blur-3xl" />
-        <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:18px_18px]" />
+        <div className="cv-studio-blob absolute -top-32 -right-24 h-80 w-80 rounded-full bg-[#00a859]/10 blur-3xl" />
+        <div className="cv-studio-blob cv-studio-blob-delay absolute -bottom-32 -left-24 h-72 w-72 rounded-full bg-[#9ce8bb]/25 blur-3xl" />
       </div>
 
       <div className="relative p-5 sm:p-7 space-y-6">
         {/* Header */}
-        <div className="space-y-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-fuchsia-200 ring-1 ring-white/15">
-            <Sparkles className="w-3.5 h-3.5" /> {t.badge}
+        <div className="space-y-3">
+          <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-[#007a40]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#00a859]" /> {t.badge}
           </span>
-          <h2 className="text-xl sm:text-2xl font-extrabold leading-tight">
-            {t.title}{' '}
-            <span className="bg-gradient-to-r from-fuchsia-300 via-indigo-200 to-emerald-300 bg-clip-text text-transparent">
-              {t.titleAccent}
-            </span>
+          <h2 className="cv-studio-heading text-2xl sm:text-[32px] font-extrabold leading-[1.1] tracking-tight text-[#0f172a]">
+            {t.title} <span className="text-[#00a859]">{t.titleAccent}</span>
           </h2>
-          <p className="text-sm text-slate-300 max-w-xl">{t.subtitle}</p>
+          <p className="text-sm sm:text-[15px] text-slate-500 max-w-xl leading-relaxed">{t.subtitle}</p>
         </div>
 
         {/* Mode switcher */}
@@ -585,21 +583,25 @@ export const CVMagicStudio: React.FC<CVMagicStudioProps> = ({
                   setMode(m.id);
                   setLocalError('');
                 }}
-                className={`group relative rounded-2xl p-3 sm:p-4 text-left transition-all cursor-pointer ring-1 ${
+                className={`group relative rounded-2xl border p-3 sm:p-4 text-left transition-all cursor-pointer ${
                   active
-                    ? 'bg-white/12 ring-white/40 shadow-lg -translate-y-0.5'
-                    : 'bg-white/[0.04] ring-white/10 hover:bg-white/[0.08] hover:ring-white/25'
+                    ? 'border-[#00a859] bg-[#ecfdf5] shadow-[0_6px_20px_-8px_rgba(0,168,89,0.45)]'
+                    : 'border-[#e3ece6] bg-white hover:border-[#a7f3d0] hover:bg-[#f6fbf8]'
                 }`}
               >
                 <span
-                  className={`mb-2 inline-flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-gradient-to-br ${m.grad} shadow-md transition-transform group-hover:scale-105`}
+                  className={`mb-2 inline-flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl transition-all ${
+                    active ? 'bg-[#00a859] text-white' : 'bg-[#ecfdf5] text-[#007a40] group-hover:bg-[#dcfce7]'
+                  }`}
                 >
                   {m.icon}
                 </span>
-                <span className="block text-sm sm:text-base font-bold">{meta.label}</span>
-                <span className="hidden sm:block text-[11px] text-slate-400">{meta.hint}</span>
+                <span className={`block text-sm sm:text-base font-bold ${active ? 'text-[#065f46]' : 'text-slate-800'}`}>
+                  {meta.label}
+                </span>
+                <span className="hidden sm:block text-[11px] text-slate-500">{meta.hint}</span>
                 {active && (
-                  <span className={`absolute inset-x-4 -bottom-px h-0.5 rounded-full bg-gradient-to-r ${m.grad}`} />
+                  <span className="absolute right-3 top-3 h-2 w-2 rounded-full bg-[#00a859] ring-4 ring-[#00a859]/15" />
                 )}
               </button>
             );
@@ -607,14 +609,17 @@ export const CVMagicStudio: React.FC<CVMagicStudioProps> = ({
         </div>
 
         {/* Mode panel */}
-        <div className={`rounded-2xl bg-white/[0.05] ring-1 ring-white/10 p-4 sm:p-5 ${mode === 'text' ? '' : 'min-h-[220px]'}`}>
-          {mode === 'voice' && (
-            <div className="flex flex-col items-center text-center gap-4">
+        {mode === 'voice' && (
+          <div className="cv-studio-hero relative overflow-hidden rounded-3xl bg-[#0b2a1c] p-5 sm:p-6 text-white">
+            <div aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(156,232,187,0.07)_1px,transparent_1px),linear-gradient(90deg,rgba(156,232,187,0.07)_1px,transparent_1px)] [background-size:28px_28px]" />
+            <div aria-hidden className="pointer-events-none absolute -top-20 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-[#00a859]/30 blur-3xl" />
+            <div className="relative flex flex-col items-center text-center gap-4">
               <div className="relative">
+                <span className="absolute -inset-5 rounded-full border border-dashed border-[#9ce8bb]/30" />
                 {isRecording && (
                   <>
-                    <span className="absolute inset-0 rounded-full bg-fuchsia-500/40 animate-ping" />
-                    <span className="absolute -inset-3 rounded-full ring-2 ring-fuchsia-400/30 animate-pulse" />
+                    <span className="absolute inset-0 rounded-full bg-[#00a859]/50 animate-ping" />
+                    <span className="absolute -inset-2 rounded-full ring-2 ring-[#9ce8bb]/40 animate-pulse" />
                   </>
                 )}
                 <button
@@ -622,10 +627,8 @@ export const CVMagicStudio: React.FC<CVMagicStudioProps> = ({
                   onClick={isRecording ? stopRecording : startRecording}
                   disabled={isTranscribing || isGenerating}
                   aria-label={isRecording ? t.voiceStop : t.voiceIdle}
-                  className={`relative flex h-24 w-24 items-center justify-center rounded-full shadow-2xl transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed active:scale-95 ${
-                    isRecording
-                      ? 'bg-gradient-to-br from-rose-500 to-fuchsia-600'
-                      : 'bg-gradient-to-br from-fuchsia-500 via-purple-600 to-indigo-600 hover:scale-105'
+                  className={`relative flex h-24 w-24 items-center justify-center rounded-full shadow-[0_10px_40px_-6px_rgba(0,168,89,0.7)] transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed active:scale-95 ${
+                    isRecording ? 'bg-rose-500' : 'bg-[#00a859] hover:bg-[#00914c] hover:scale-105'
                   }`}
                 >
                   {isTranscribing ? (
@@ -639,14 +642,14 @@ export const CVMagicStudio: React.FC<CVMagicStudioProps> = ({
               </div>
 
               {/* waveform */}
-              <div className="flex h-10 items-center justify-center gap-[3px]" aria-hidden>
+              <div className="mt-2 flex h-10 items-center justify-center gap-[3px]" aria-hidden>
                 {Array.from({ length: BAR_COUNT }).map((_, i) => (
                   <span
                     key={i}
                     ref={(el) => {
                       barsRef.current[i] = el;
                     }}
-                    className="block h-full w-[3px] origin-center rounded-full bg-gradient-to-t from-fuchsia-400 to-emerald-300 transition-transform duration-75"
+                    className="block h-full w-[3px] origin-center rounded-full bg-[#9ce8bb] transition-transform duration-75"
                     style={{ transform: 'scaleY(0.12)' }}
                   />
                 ))}
@@ -657,7 +660,7 @@ export const CVMagicStudio: React.FC<CVMagicStudioProps> = ({
                   {isTranscribing ? t.voiceTranscribing : isRecording ? t.voiceRec : t.voiceIdle}
                 </p>
                 {isRecording && (
-                  <p className="text-xs font-mono text-fuchsia-200">
+                  <p className="text-xs font-mono text-[#9ce8bb]">
                     ● {formatTime(seconds)} / {formatTime(MAX_RECORD_SECONDS)}
                   </p>
                 )}
@@ -665,15 +668,15 @@ export const CVMagicStudio: React.FC<CVMagicStudioProps> = ({
 
               {/* guidance */}
               <div className="w-full">
-                <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">{t.voiceTipTitle}</p>
+                <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#9ce8bb]/80">{t.voiceTipTitle}</p>
                 <div className="flex flex-wrap justify-center gap-1.5">
                   {t.voicePrompts.map((p: string, i: number) => (
                     <span
                       key={p}
-                      className={`rounded-full px-2.5 py-1 text-[11px] ring-1 transition-all ${
+                      className={`rounded-full border px-2.5 py-1 text-[11px] transition-all ${
                         isRecording && i === promptIdx
-                          ? 'bg-fuchsia-500/25 ring-fuchsia-300/60 text-white scale-105'
-                          : 'bg-white/5 ring-white/10 text-slate-300'
+                          ? 'border-[#9ce8bb] bg-[#00a859]/30 text-white scale-105'
+                          : 'border-white/10 bg-white/5 text-[#c9eed8]'
                       }`}
                     >
                       {p}
@@ -683,91 +686,89 @@ export const CVMagicStudio: React.FC<CVMagicStudioProps> = ({
               </div>
 
               {interim && (
-                <p className="w-full rounded-xl bg-black/30 px-3 py-2 text-left text-sm italic text-slate-300">
+                <p className="w-full rounded-2xl bg-white px-3.5 py-2.5 text-left text-sm italic text-slate-700 shadow-lg">
                   {interim}
-                  <span className="ml-0.5 inline-block w-1.5 animate-pulse">▍</span>
+                  <span className="ml-0.5 inline-block w-1.5 animate-pulse text-[#00a859]">▍</span>
                 </p>
               )}
             </div>
-          )}
+          </div>
+        )}
 
-          {mode === 'text' && (
-            <div className="space-y-3">
-              <div className="flex flex-wrap items-center gap-1.5">
-                {t.textChips.map((chip: string) => (
-                  <button
-                    key={chip}
-                    type="button"
-                    onClick={() => insertChip(chip)}
-                    className="rounded-full bg-white/5 px-2.5 py-1 text-[11px] font-medium text-slate-200 ring-1 ring-white/10 hover:bg-indigo-500/25 hover:ring-indigo-300/50 transition-colors cursor-pointer"
-                  >
-                    + {chip}
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMaterial(sampleText);
-                    setLocalError('');
-                  }}
-                  className="ml-auto inline-flex items-center gap-1 rounded-full bg-indigo-500/20 px-2.5 py-1 text-[11px] font-bold text-indigo-100 ring-1 ring-indigo-300/40 hover:bg-indigo-500/35 cursor-pointer"
-                >
-                  <Sparkles className="w-3 h-3" /> {t.sample}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {mode === 'upload' && (
-            <div
-              onDragOver={(e) => {
-                e.preventDefault();
-                setIsDragging(true);
+        {mode === 'text' && (
+          <div className="flex flex-wrap items-center gap-1.5">
+            {t.textChips.map((chip: string) => (
+              <button
+                key={chip}
+                type="button"
+                onClick={() => insertChip(chip)}
+                className="rounded-full border border-[#e3ece6] bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:border-[#a7f3d0] hover:bg-[#ecfdf5] hover:text-[#007a40] transition-colors cursor-pointer"
+              >
+                + {chip}
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                setMaterial(sampleText);
+                setLocalError('');
               }}
-              onDragLeave={() => setIsDragging(false)}
-              onDrop={(e) => {
-                e.preventDefault();
-                setIsDragging(false);
-                handleFile(e.dataTransfer.files?.[0]);
-              }}
-              onClick={() => !isReadingFile && fileInputRef.current?.click()}
-              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && fileInputRef.current?.click()}
-              role="button"
-              tabIndex={0}
-              className={`flex min-h-[190px] flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed p-6 text-center transition-all cursor-pointer ${
-                isDragging
-                  ? 'border-emerald-300 bg-emerald-400/10 scale-[1.01]'
-                  : 'border-white/20 hover:border-emerald-300/60 hover:bg-white/[0.04]'
-              }`}
+              className="ml-auto inline-flex items-center gap-1 rounded-full bg-[#ecfdf5] border border-[#a7f3d0] px-3 py-1.5 text-xs font-bold text-[#007a40] hover:bg-[#dcfce7] cursor-pointer"
             >
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept={ACCEPTED_EXT.join(',') + ',image/*'}
-                className="hidden"
-                onChange={(e) => handleFile(e.target.files?.[0])}
-              />
-              <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg">
-                {isReadingFile ? <ScanText className="w-7 h-7 animate-pulse" /> : <UploadCloud className="w-7 h-7" />}
-              </span>
-              <div>
-                <p className="text-sm font-bold">{isReadingFile ? t.reading : t.dropTitle}</p>
-                <p className="text-[11px] text-slate-400 mt-0.5">{t.dropHint}</p>
-              </div>
-              {uploadedName && !isReadingFile && (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-3 py-1 text-xs text-emerald-100 ring-1 ring-emerald-300/40">
-                  <FileText className="w-3.5 h-3.5" /> {uploadedName}
-                </span>
-              )}
+              <Sparkles className="w-3.5 h-3.5" /> {t.sample}
+            </button>
+          </div>
+        )}
+
+        {mode === 'upload' && (
+          <div
+            onDragOver={(e) => {
+              e.preventDefault();
+              setIsDragging(true);
+            }}
+            onDragLeave={() => setIsDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setIsDragging(false);
+              handleFile(e.dataTransfer.files?.[0]);
+            }}
+            onClick={() => !isReadingFile && fileInputRef.current?.click()}
+            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && fileInputRef.current?.click()}
+            role="button"
+            tabIndex={0}
+            className={`flex min-h-[210px] flex-col items-center justify-center gap-3 rounded-3xl border-2 border-dashed p-6 text-center transition-all cursor-pointer ${
+              isDragging
+                ? 'border-[#00a859] bg-[#ecfdf5] scale-[1.01]'
+                : 'border-[#cfe3d6] bg-[#f6fbf8] hover:border-[#00a859] hover:bg-[#ecfdf5]'
+            }`}
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept={ACCEPTED_EXT.join(',') + ',image/*'}
+              className="hidden"
+              onChange={(e) => handleFile(e.target.files?.[0])}
+            />
+            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#00a859] text-white shadow-[0_8px_24px_-8px_rgba(0,168,89,0.7)]">
+              {isReadingFile ? <ScanText className="w-7 h-7 animate-pulse" /> : <UploadCloud className="w-7 h-7" />}
+            </span>
+            <div>
+              <p className="text-sm font-bold text-slate-900">{isReadingFile ? t.reading : t.dropTitle}</p>
+              <p className="text-xs text-slate-500 mt-0.5">{t.dropHint}</p>
             </div>
-          )}
-        </div>
+            {uploadedName && !isReadingFile && (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#a7f3d0] bg-white px-3 py-1 text-xs font-medium text-[#065f46]">
+                <FileText className="w-3.5 h-3.5" /> {uploadedName}
+              </span>
+            )}
+          </div>
+        )}
 
         {/* Shared material editor */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-bold text-slate-300 flex items-center gap-1.5">
-              <FileText className="w-3.5 h-3.5" /> {t.material}
+            <span className="font-bold text-slate-700 flex items-center gap-1.5">
+              <FileText className="w-3.5 h-3.5 text-[#00a859]" /> {t.material}
             </span>
             <span className="flex items-center gap-3 text-slate-400">
               <span>
@@ -781,7 +782,7 @@ export const CVMagicStudio: React.FC<CVMagicStudioProps> = ({
                     setUploadedName('');
                     setLocalInfo('');
                   }}
-                  className="inline-flex items-center gap-1 hover:text-rose-300 cursor-pointer"
+                  className="inline-flex items-center gap-1 hover:text-rose-500 cursor-pointer"
                 >
                   <RotateCcw className="w-3 h-3" /> {t.clear}
                 </button>
@@ -798,13 +799,13 @@ export const CVMagicStudio: React.FC<CVMagicStudioProps> = ({
             onFocus={() => mode !== 'text' && !material && setMode('text')}
             rows={mode === 'text' ? 9 : 5}
             placeholder={mode === 'text' ? t.textPlaceholder : t.materialEmpty}
-            className="w-full resize-y rounded-2xl bg-black/30 p-3.5 text-sm leading-relaxed text-slate-100 placeholder:text-slate-500 ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-fuchsia-400/60"
+            className="w-full resize-y rounded-2xl border border-[#e3ece6] bg-white p-4 text-sm leading-relaxed text-slate-800 placeholder:text-slate-400 transition-shadow focus:outline-none focus:border-[#00a859] focus:ring-4 focus:ring-[#00a859]/10"
           />
         </div>
 
         {/* Messages */}
         {shownError && (
-          <div className="flex items-start gap-2 rounded-xl bg-rose-500/15 p-3 text-xs text-rose-100 ring-1 ring-rose-400/40">
+          <div className="flex items-start gap-2 rounded-2xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
             <span className="flex-1">{shownError}</span>
             {localError && (
@@ -815,32 +816,32 @@ export const CVMagicStudio: React.FC<CVMagicStudioProps> = ({
           </div>
         )}
         {!shownError && (statusMsg || localInfo) && (
-          <div className="flex items-center gap-2 rounded-xl bg-emerald-500/15 p-3 text-xs text-emerald-100 ring-1 ring-emerald-400/40">
-            <CheckCircle2 className="w-4 h-4 shrink-0" />
+          <div className="flex items-center gap-2 rounded-2xl border border-[#a7f3d0] bg-[#ecfdf5] p-3 text-xs text-[#065f46]">
+            <CheckCircle2 className="w-4 h-4 shrink-0 text-[#00a859]" />
             <span className="font-semibold">{statusMsg || localInfo}</span>
           </div>
         )}
 
         {/* Generate */}
         {isGenerating ? (
-          <div className="rounded-2xl bg-white/[0.06] p-4 ring-1 ring-white/15">
-            <div className="mb-3 flex items-center gap-2 text-sm font-bold">
-              <Loader2 className="w-4 h-4 animate-spin text-fuchsia-300" /> {t.generating}
+          <div className="rounded-2xl border border-[#dce9df] bg-[#f6fbf8] p-4">
+            <div className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-900">
+              <Loader2 className="w-4 h-4 animate-spin text-[#00a859]" /> {t.generating}
             </div>
             <ol className="grid gap-2 sm:grid-cols-4">
               {t.steps.map((s: string, i: number) => (
                 <li
                   key={s}
-                  className={`flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] ring-1 transition-all ${
+                  className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-[11px] font-medium transition-all ${
                     i < genStep
-                      ? 'bg-emerald-500/15 ring-emerald-300/40 text-emerald-100'
+                      ? 'border-[#a7f3d0] bg-white text-[#065f46]'
                       : i === genStep
-                      ? 'bg-fuchsia-500/20 ring-fuchsia-300/50 text-white'
-                      : 'bg-white/5 ring-white/10 text-slate-400'
+                      ? 'border-[#00a859] bg-[#ecfdf5] text-[#007a40]'
+                      : 'border-[#e3ece6] bg-white text-slate-400'
                   }`}
                 >
                   {i < genStep ? (
-                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-[#00a859]" />
                   ) : i === genStep ? (
                     <Loader2 className="w-3.5 h-3.5 shrink-0 animate-spin" />
                   ) : (
@@ -850,9 +851,9 @@ export const CVMagicStudio: React.FC<CVMagicStudioProps> = ({
                 </li>
               ))}
             </ol>
-            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
+            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#dce9df]">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-fuchsia-400 via-indigo-300 to-emerald-300 transition-all duration-700"
+                className="h-full rounded-full bg-[#00a859] transition-all duration-700"
                 style={{ width: `${((genStep + 1) / t.steps.length) * 100}%` }}
               />
             </div>
@@ -862,29 +863,30 @@ export const CVMagicStudio: React.FC<CVMagicStudioProps> = ({
             type="button"
             onClick={handleGenerate}
             disabled={busy || charCount < MIN_CHARS}
-            className="cv-studio-cta group relative w-full overflow-hidden rounded-2xl bg-gradient-to-r from-fuchsia-500 via-indigo-500 to-emerald-500 py-4 text-base font-extrabold shadow-xl transition-all hover:shadow-fuchsia-500/30 active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            className="cv-studio-cta group relative w-full overflow-hidden rounded-2xl bg-[#00a859] py-4 text-base font-bold text-white shadow-[0_10px_30px_-10px_rgba(0,168,89,0.8)] transition-all hover:bg-[#00914c] active:bg-[#007a40] active:scale-[0.99] disabled:bg-[#b9dcc7] disabled:shadow-none disabled:cursor-not-allowed cursor-pointer"
           >
             <span className="relative z-10 flex items-center justify-center gap-2">
               <Wand2 className="w-5 h-5 transition-transform group-hover:rotate-12" />
               {t.generate}
+              <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </span>
           </button>
         )}
 
         {/* Footer */}
-        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between text-[11px] text-slate-400">
+        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between text-xs text-slate-500">
           <div className="flex flex-wrap gap-x-4 gap-y-1">
-            <span className="inline-flex items-center gap-1">
-              <BadgeCheck className="w-3.5 h-3.5 text-emerald-300" /> {t.trust[0]}
+            <span className="inline-flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#00a859]" /> {t.trust[0]}
             </span>
-            <span className="inline-flex items-center gap-1">
-              <LayoutTemplate className="w-3.5 h-3.5 text-indigo-300" /> {t.trust[1]}
+            <span className="inline-flex items-center gap-1.5">
+              <LayoutTemplate className="w-3.5 h-3.5 text-[#00a859]" /> {t.trust[1]}
             </span>
           </div>
           <button
             type="button"
             onClick={onManualEdit}
-            className="self-start sm:self-auto font-semibold text-slate-200 hover:text-white cursor-pointer"
+            className="self-start sm:self-auto font-semibold text-[#007a40] hover:text-[#00a859] cursor-pointer"
           >
             {t.manual}
           </button>

@@ -341,3 +341,5 @@ button, input, select, textarea, label {
 @media (prefers-reduced-motion: reduce) {
   .cv-studio-blob, .cv-studio-cta::after { animation: none; }
 }
+.cv-studio { font-family: Inter, Onest, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+.cv-studio-heading { font-family: Onest, Inter, system-ui, sans-serif; }

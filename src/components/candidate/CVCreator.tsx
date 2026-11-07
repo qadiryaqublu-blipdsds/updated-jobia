@@ -926,8 +926,8 @@ export const CVCreator: React.FC<CVCreatorProps> = ({
               onClick={() => setActiveTab('paste')}
               className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 activeTab === 'paste'
-                  ? 'bg-purple-700 text-white shadow-xs'
-                  : 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200'
+                  ? 'bg-[#00a859] text-white shadow-xs'
+                  : 'bg-[#ecfdf5] text-[#007a40] hover:bg-[#dcfce7] border border-[#a7f3d0]'
               }`}
             >
               <Sparkles className="w-3.5 h-3.5 shrink-0" />
@@ -972,11 +972,11 @@ export const CVCreator: React.FC<CVCreatorProps> = ({
               onClick={() => setActiveTab('paste')}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 activeTab === 'paste'
-                  ? 'bg-white text-purple-700 shadow-xs border border-purple-200 ring-1 ring-purple-400/20'
+                  ? 'bg-white text-[#007a40] shadow-xs border border-[#a7f3d0] ring-1 ring-[#00a859]/20'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+              <Sparkles className="w-3.5 h-3.5 text-[#00a859]" />
               <span>
                 {language === 'en' ? 'AI Studio (voice · text · upload)' : language === 'ru' ? 'AI Студия (голос · текст · файл)' : 'AI Studio (səs · yazı · fayl)'}
               </span>
@@ -1384,7 +1384,7 @@ export const CVCreator: React.FC<CVCreatorProps> = ({
                     className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors flex items-center gap-1 cursor-pointer"
                     title={language === 'en' ? 'Load pre-filled sample CV' : language === 'ru' ? 'Загрузить готовый пример резюме' : 'Hazır nümunə CV məlumatlarını yüklə'}
                   >
-                    <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+                    <Sparkles className="w-3.5 h-3.5 text-[#00a859]" />
                     <span>{language === 'en' ? 'Sample CV' : language === 'ru' ? 'Пример резюме' : 'Nümunə CV'}</span>
                   </button>
 
